@@ -1,0 +1,2521 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Mesin tebak angka sederhana dengan sedikit kejahilan."
+    >
+
+    <title>Mesin Tebak Angka</title>
+
+    <style>
+
+        :root {
+            --bg: #f5f5f3;
+            --surface: #ffffff;
+            --surface-soft: #fafaf8;
+            --text: #171717;
+            --muted: #747474;
+            --line: #e4e4e1;
+
+            --accent: #c96f5d;
+            --accent-dark: #a85445;
+            --accent-soft: #f4ded8;
+        }
+
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+
+        body {
+            min-height: 100vh;
+
+            background: var(--bg);
+            color: var(--text);
+
+            font-family:
+                Inter,
+                ui-sans-serif,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            display: flex;
+            justify-content: center;
+
+            padding: 24px;
+        }
+
+
+        button,
+        input {
+            font: inherit;
+        }
+
+
+        button {
+            cursor: pointer;
+        }
+
+
+        button:focus-visible,
+        input:focus-visible {
+            outline: 3px solid var(--accent-soft);
+            outline-offset: 2px;
+        }
+
+
+        .app {
+            width: min(760px, 100%);
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 10px 0 24px;
+        }
+
+
+        .brand {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+
+
+        .brand span {
+            color: var(--accent);
+        }
+
+
+        .round {
+            color: var(--muted);
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        /* =========================
+           MAIN CARD
+        ========================= */
+
+        .game-card {
+            background: var(--surface);
+
+            border: 1px solid var(--line);
+            border-radius: 24px;
+
+            padding: clamp(28px, 6vw, 52px);
+
+            box-shadow:
+                0 12px 35px rgba(0, 0, 0, 0.035);
+        }
+
+
+        .intro {
+            text-align: center;
+        }
+
+
+        .emoji {
+            width: 76px;
+            height: 76px;
+
+            margin: 0 auto 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: var(--accent-soft);
+
+            border-radius: 22px;
+
+            font-size: 36px;
+
+            transition:
+                transform .2s ease,
+                background .2s ease;
+        }
+
+
+        .emoji.pop {
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+
+        h1 {
+            font-size: clamp(34px, 7vw, 58px);
+            line-height: .95;
+
+            letter-spacing: -0.065em;
+        }
+
+
+        .subtitle {
+            max-width: 480px;
+
+            margin: 18px auto 0;
+
+            color: var(--muted);
+
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           DIFFICULTY
+        ========================= */
+
+        .difficulty {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 10px;
+
+            margin-top: 32px;
+        }
+
+
+        .difficulty button {
+            border: 1px solid var(--line);
+
+            background: var(--surface-soft);
+
+            border-radius: 14px;
+
+            padding: 14px;
+
+            color: var(--text);
+
+            text-align: left;
+
+            transition:
+                border-color .2s ease,
+                background .2s ease,
+                transform .2s ease;
+        }
+
+
+        .difficulty button:hover {
+            transform: translateY(-2px);
+        }
+
+
+        .difficulty button.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+
+        .difficulty-title {
+            display: block;
+
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+
+        .difficulty-description {
+            display: block;
+
+            margin-top: 4px;
+
+            color: var(--muted);
+
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+
+        /* =========================
+           GAME
+        ========================= */
+
+        .game-area {
+            display: none;
+        }
+
+
+        .game-area.active {
+            display: block;
+        }
+
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-top: 34px;
+
+            padding-bottom: 14px;
+
+            border-bottom: 1px solid var(--line);
+        }
+
+
+        .status-label {
+            color: var(--muted);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+
+        .attempts {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+
+        .number-input {
+            width: 100%;
+
+            margin-top: 22px;
+
+            padding: 20px;
+
+            border: 1px solid var(--line);
+            border-radius: 16px;
+
+            background: var(--surface);
+
+            color: var(--text);
+
+            text-align: center;
+
+            font-size: 38px;
+            font-weight: 800;
+
+            outline: none;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+
+        .number-input:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                0 0 0 4px var(--accent-soft);
+        }
+
+
+        .guess-button {
+            width: 100%;
+
+            margin-top: 10px;
+
+            border: 0;
+            border-radius: 15px;
+
+            padding: 16px;
+
+            background: var(--text);
+            color: white;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            transition:
+                transform .2s ease,
+                background .2s ease;
+        }
+
+
+        .guess-button:hover {
+            transform: translateY(-2px);
+            background: #333333;
+        }
+
+
+        .guess-button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+
+        /* =========================
+           GIVE UP BUTTON
+        ========================= */
+
+        .give-up-button {
+            width: 100%;
+
+            margin-top: 8px;
+
+            padding: 12px;
+
+            border: 0;
+
+            background: transparent;
+
+            color: var(--muted);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            transition:
+                color .2s ease,
+                transform .2s ease;
+        }
+
+
+        .give-up-button:hover {
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
+        .message {
+            min-height: 62px;
+
+            margin-top: 22px;
+            padding: 16px;
+
+            border-radius: 15px;
+
+            background: var(--surface-soft);
+            border: 1px solid var(--line);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 9px;
+
+            text-align: center;
+
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+
+        .message-emoji {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+
+        /* =========================
+           CLUES
+        ========================= */
+
+        .clues {
+            margin-top: 24px;
+        }
+
+
+        .clue-title {
+            display: flex;
+            justify-content: space-between;
+
+            color: var(--muted);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            margin-bottom: 9px;
+        }
+
+
+        .clue-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 8px;
+        }
+
+
+        .clue-button {
+            border: 1px solid var(--line);
+
+            background: white;
+
+            border-radius: 12px;
+
+            padding: 12px 8px;
+
+            color: var(--text);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+        }
+
+
+        .clue-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+
+            background: var(--accent-soft);
+
+            border-color: var(--accent);
+        }
+
+
+        .clue-button:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+
+        /* =========================
+           THEME
+        ========================= */
+
+        .theme-section {
+            margin-top: 28px;
+
+            padding-top: 24px;
+
+            border-top: 1px solid var(--line);
+        }
+
+
+        .theme-title {
+            color: var(--muted);
+
+            font-size: 12px;
+            font-weight: 700;
+
+            margin-bottom: 12px;
+        }
+
+
+        .theme-colors {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .theme {
+            width: 28px;
+            height: 28px;
+
+            border-radius: 50%;
+
+            border: 2px solid white;
+
+            outline: 1px solid var(--line);
+
+            cursor: pointer;
+
+            transition:
+                transform .2s ease,
+                outline-color .2s ease;
+        }
+
+
+        .theme:hover {
+            transform: scale(1.12);
+        }
+
+
+        .theme.active {
+            outline: 2px solid var(--text);
+        }
+
+
+        /* =========================
+           START
+        ========================= */
+
+        .start-button {
+            width: 100%;
+
+            margin-top: 28px;
+
+            border: 0;
+            border-radius: 15px;
+
+            padding: 16px;
+
+            background: var(--text);
+            color: white;
+
+            font-weight: 800;
+
+            transition:
+                transform .2s ease;
+        }
+
+
+        .start-button:hover {
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================
+           ROUND RESULT
+        ========================= */
+
+        .round-result {
+            display: none;
+
+            text-align: center;
+        }
+
+
+        .round-result.active {
+            display: block;
+        }
+
+
+        .round-result-title {
+            font-size: clamp(36px, 8vw, 58px);
+
+            line-height: 1;
+
+            letter-spacing: -0.06em;
+        }
+
+
+        .round-result-score {
+            margin-top: 16px;
+
+            color: var(--muted);
+
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+
+        .round-number-box {
+            margin: 26px auto 0;
+
+            width: 100px;
+            height: 100px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 24px;
+
+            background: var(--accent-soft);
+
+            color: var(--accent);
+
+            font-size: 38px;
+            font-weight: 900;
+
+            letter-spacing: -0.05em;
+        }
+
+
+        .round-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 10px;
+
+            max-width: 420px;
+
+            margin: 22px auto 0;
+        }
+
+
+        .round-stat {
+            padding: 18px;
+
+            border: 1px solid var(--line);
+
+            background: var(--surface-soft);
+
+            border-radius: 16px;
+        }
+
+
+        .round-stat-label {
+            color: var(--muted);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+
+        .round-stat-value {
+            margin-top: 5px;
+
+            font-size: 21px;
+            font-weight: 900;
+        }
+
+
+        .next-round-button {
+            width: 100%;
+
+            max-width: 420px;
+
+            margin-top: 24px;
+
+            border: 0;
+            border-radius: 15px;
+
+            padding: 16px;
+
+            background: var(--text);
+            color: white;
+
+            font-size: 14px;
+            font-weight: 800;
+
+            transition:
+                transform .2s ease,
+                background .2s ease;
+        }
+
+
+        .next-round-button:hover {
+            transform: translateY(-2px);
+            background: #333333;
+        }
+
+
+        /* =========================
+           FINAL RESULT
+        ========================= */
+
+        .result {
+            display: none;
+
+            text-align: center;
+        }
+
+
+        .result.active {
+            display: block;
+        }
+
+
+        .result-title {
+            font-size: clamp(36px, 8vw, 58px);
+
+            line-height: 1;
+
+            letter-spacing: -0.06em;
+        }
+
+
+        .result-score {
+            margin-top: 16px;
+
+            color: var(--muted);
+
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+
+        .rank {
+            margin: 28px auto 0;
+
+            padding: 24px;
+
+            max-width: 420px;
+
+            background: var(--accent-soft);
+
+            border-radius: 18px;
+        }
+
+
+        .rank-label {
+            color: var(--muted);
+
+            font-size: 11px;
+            font-weight: 800;
+
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+
+        .rank-name {
+            margin-top: 6px;
+
+            color: var(--accent);
+
+            font-size: 25px;
+            font-weight: 900;
+
+            letter-spacing: -0.04em;
+        }
+
+
+        .restart {
+            margin-top: 24px;
+
+            border: 0;
+
+            background: transparent;
+
+            color: var(--accent);
+
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 560px) {
+
+            body {
+                padding: 14px;
+            }
+
+
+            .game-card {
+                border-radius: 20px;
+                padding: 24px 18px;
+            }
+
+
+            .difficulty {
+                grid-template-columns: 1fr;
+            }
+
+
+            .clue-buttons {
+                grid-template-columns: 1fr;
+            }
+
+
+            .theme-section {
+                text-align: center;
+            }
+
+
+            .theme-colors {
+                justify-content: center;
+            }
+
+
+            .round-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<main class="app">
+
+    <header class="header">
+
+        <div class="brand">
+            TEBAK<span>AN</span>GKA
+        </div>
+
+        <div class="round">
+            Ronde <span id="roundNumber">0</span>/4
+        </div>
+
+    </header>
+
+
+    <section class="game-card">
+
+
+        <!-- =========================
+             START
+        ========================= -->
+
+        <div id="startScreen">
+
+            <div class="intro">
+
+                <div
+                    class="emoji"
+                    id="startEmoji"
+                >
+                    🎯
+                </div>
+
+                <h1>
+                    Tebak angkanya.
+                </h1>
+
+                <p class="subtitle">
+                    Aku sudah memilih angka.
+                    Kamu punya <strong>4 ronde</strong>
+                    untuk menemukannya.
+                    Jangan terlalu percaya padaku. 😌
+                </p>
+
+            </div>
+
+
+            <div class="difficulty">
+
+                <button
+                    class="difficulty-option active"
+                    data-mode="easy"
+                    type="button"
+                >
+
+                    <span class="difficulty-title">
+                        Easy
+                    </span>
+
+                    <span class="difficulty-description">
+                        Angka lebih mudah ditebak.
+                    </span>
+
+                </button>
+
+
+                <button
+                    class="difficulty-option"
+                    data-mode="hard"
+                    type="button"
+                >
+
+                    <span class="difficulty-title">
+                        Hard
+                    </span>
+
+                    <span class="difficulty-description">
+                        Angkanya lebih random dan usil.
+                    </span>
+
+                </button>
+
+            </div>
+
+
+            <div class="theme-section">
+
+                <div class="theme-title">
+                    Pilih warna
+                </div>
+
+                <div class="theme-colors">
+
+                    <button
+                        class="theme active"
+                        data-theme="terracotta"
+                        style="background:#c96f5d"
+                        aria-label="Terracotta"
+                        type="button"
+                    ></button>
+
+                    <button
+                        class="theme"
+                        data-theme="blue"
+                        style="background:#5d83c9"
+                        aria-label="Biru"
+                        type="button"
+                    ></button>
+
+                    <button
+                        class="theme"
+                        data-theme="green"
+                        style="background:#67966f"
+                        aria-label="Hijau"
+                        type="button"
+                    ></button>
+
+                    <button
+                        class="theme"
+                        data-theme="purple"
+                        style="background:#8769a6"
+                        aria-label="Ungu"
+                        type="button"
+                    ></button>
+
+                    <button
+                        class="theme"
+                        data-theme="yellow"
+                        style="background:#c99d4d"
+                        aria-label="Kuning"
+                        type="button"
+                    ></button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="start-button"
+                id="startButton"
+                type="button"
+            >
+                Mulai permainan
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             GAME
+        ========================= -->
+
+        <div
+            class="game-area"
+            id="gameArea"
+        >
+
+            <div class="intro">
+
+                <div
+                    class="emoji"
+                    id="gameEmoji"
+                >
+                    🤔
+                </div>
+
+                <h1 id="gameTitle">
+                    Berapa angkanya?
+                </h1>
+
+                <p class="subtitle">
+                    Angka berada di antara
+                    <strong>1 dan 100</strong>.
+                    Aku tidak akan bilang kamu dekat...
+                    atau jauh. 😈
+                </p>
+
+            </div>
+
+
+            <div class="status-row">
+
+                <span class="status-label">
+                    Percobaan
+                </span>
+
+                <span class="attempts">
+                    <span id="attemptCount">0</span>
+                </span>
+
+            </div>
+
+
+            <input
+                id="numberInput"
+                class="number-input"
+                type="number"
+                min="1"
+                max="100"
+                step="1"
+                inputmode="numeric"
+                placeholder="?"
+                autocomplete="off"
+                aria-label="Masukkan tebakan angka"
+            >
+
+
+            <button
+                class="guess-button"
+                id="guessButton"
+                type="button"
+            >
+                TEBAK
+            </button>
+
+
+            <button
+                class="give-up-button"
+                id="giveUpButton"
+                type="button"
+            >
+                🏳️ Nyerah
+            </button>
+
+
+            <div
+                class="message"
+                id="message"
+                role="status"
+                aria-live="polite"
+            >
+
+                <span
+                    class="message-emoji"
+                    id="messageEmoji"
+                >
+                    🤨
+                </span>
+
+                <span id="messageText">
+                    Silakan buat keputusan yang mungkin akan kamu sesali.
+                </span>
+
+            </div>
+
+
+            <div class="clues">
+
+                <div class="clue-title">
+
+                    <span>
+                        Bantuan
+                    </span>
+
+                    <span>
+                        <span id="clueCount">3</span>
+                        tersisa
+                    </span>
+
+                </div>
+
+
+                <div class="clue-buttons">
+
+                    <button
+                        class="clue-button"
+                        data-clue="range"
+                        type="button"
+                    >
+                        🔎 Rentang
+                    </button>
+
+                    <button
+                        class="clue-button"
+                        data-clue="odd"
+                        type="button"
+                    >
+                        🔢 Ganjil / Genap
+                    </button>
+
+                    <button
+                        class="clue-button"
+                        data-clue="half"
+                        type="button"
+                    >
+                        📍 Bagian angka
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             ROUND RESULT
+        ========================= -->
+
+        <div
+            class="round-result"
+            id="roundResultScreen"
+        >
+
+            <div
+                class="emoji"
+                id="roundResultEmoji"
+            >
+                🎉
+            </div>
+
+            <h1
+                class="round-result-title"
+                id="roundResultTitle"
+            >
+                Ketemu.
+            </h1>
+
+            <p
+                class="round-result-score"
+                id="roundResultText"
+            >
+                Kamu berhasil menemukan angka rahasianya.
+                Berikut hasil ronde ini.
+            </p>
+
+
+            <div
+                class="round-number-box"
+                id="correctNumber"
+            >
+                0
+            </div>
+
+
+            <div class="round-stats">
+
+                <div class="round-stat">
+
+                    <div class="round-stat-label">
+                        Percobaan
+                    </div>
+
+                    <div
+                        class="round-stat-value"
+                        id="roundAttempts"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="round-stat">
+
+                    <div class="round-stat-label">
+                        Clue
+                    </div>
+
+                    <div
+                        class="round-stat-value"
+                        id="roundClues"
+                    >
+                        0 / 3
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="next-round-button"
+                id="nextRoundButton"
+                type="button"
+            >
+                Lanjut ke ronde berikutnya →
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             FINAL RESULT
+        ========================= -->
+
+        <div
+            class="result"
+            id="resultScreen"
+        >
+
+            <div
+                class="emoji"
+                id="finalEmoji"
+            >
+                🏆
+            </div>
+
+            <h1 class="result-title">
+                Selesai.
+            </h1>
+
+            <p class="result-score">
+
+                Kamu menyelesaikan
+                <strong>4 ronde</strong>
+                dengan total
+                <strong id="totalAttempts">0</strong>
+                percobaan.
+
+                <br>
+
+                Kamu menyerah
+                <strong id="totalSurrenders">0</strong>
+                kali.
+
+            </p>
+
+
+            <div class="rank">
+
+                <div class="rank-label">
+                    Gelar kamu
+                </div>
+
+                <div
+                    class="rank-name"
+                    id="rankName"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <button
+                class="restart"
+                id="restartButton"
+                type="button"
+            >
+                Main lagi →
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const startScreen =
+        document.getElementById("startScreen");
+
+    const gameArea =
+        document.getElementById("gameArea");
+
+    const roundResultScreen =
+        document.getElementById("roundResultScreen");
+
+    const resultScreen =
+        document.getElementById("resultScreen");
+
+    const startButton =
+        document.getElementById("startButton");
+
+    const nextRoundButton =
+        document.getElementById("nextRoundButton");
+
+    const restartButton =
+        document.getElementById("restartButton");
+
+    const giveUpButton =
+        document.getElementById("giveUpButton");
+
+    const numberInput =
+        document.getElementById("numberInput");
+
+    const guessButton =
+        document.getElementById("guessButton");
+
+    const attemptCount =
+        document.getElementById("attemptCount");
+
+    const roundNumber =
+        document.getElementById("roundNumber");
+
+    const messageEmoji =
+        document.getElementById("messageEmoji");
+
+    const messageText =
+        document.getElementById("messageText");
+
+    const clueCount =
+        document.getElementById("clueCount");
+
+    const totalAttempts =
+        document.getElementById("totalAttempts");
+
+    const totalSurrenders =
+        document.getElementById("totalSurrenders");
+
+    const rankName =
+        document.getElementById("rankName");
+
+    const gameEmoji =
+        document.getElementById("gameEmoji");
+
+    const correctNumber =
+        document.getElementById("correctNumber");
+
+    const roundAttempts =
+        document.getElementById("roundAttempts");
+
+    const roundClues =
+        document.getElementById("roundClues");
+
+    const roundResultTitle =
+        document.getElementById("roundResultTitle");
+
+    const roundResultText =
+        document.getElementById("roundResultText");
+
+    const roundResultEmoji =
+        document.getElementById("roundResultEmoji");
+
+    const finalEmoji =
+        document.getElementById("finalEmoji");
+
+
+    /* =========================
+       GAME STATE
+    ========================= */
+
+    let difficulty = "easy";
+
+    let currentRound = 0;
+
+    let attempts = 0;
+
+    let total = 0;
+
+    let secretNumber = 0;
+
+    let cluesLeft = 3;
+
+    let cluesUsedThisRound = 0;
+
+    let totalSurrendered = 0;
+
+    let surrenderPenalty = 0;
+
+    let usedNumbers = new Set();
+
+    let clueUsed = {
+        range: false,
+        odd: false,
+        half: false
+    };
+
+
+    /* =========================
+       THEMES
+    ========================= */
+
+    const themes = {
+
+        terracotta: {
+            accent: "#c96f5d",
+            dark: "#a85445",
+            soft: "#f4ded8"
+        },
+
+        blue: {
+            accent: "#5d83c9",
+            dark: "#4568aa",
+            soft: "#e0e8f7"
+        },
+
+        green: {
+            accent: "#67966f",
+            dark: "#4e7857",
+            soft: "#e2eee4"
+        },
+
+        purple: {
+            accent: "#8769a6",
+            dark: "#6c5088",
+            soft: "#e9e1f0"
+        },
+
+        yellow: {
+            accent: "#c99d4d",
+            dark: "#a47d37",
+            soft: "#f3e9cf"
+        }
+
+    };
+
+
+    document
+        .querySelectorAll(".theme")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const theme =
+                        themes[button.dataset.theme];
+
+
+                    document.documentElement.style.setProperty(
+                        "--accent",
+                        theme.accent
+                    );
+
+                    document.documentElement.style.setProperty(
+                        "--accent-dark",
+                        theme.dark
+                    );
+
+                    document.documentElement.style.setProperty(
+                        "--accent-soft",
+                        theme.soft
+                    );
+
+
+                    document
+                        .querySelectorAll(".theme")
+                        .forEach(item =>
+                            item.classList.remove("active")
+                        );
+
+
+                    button.classList.add("active");
+
+                }
+            );
+
+        });
+
+
+    /* =========================
+       DIFFICULTY
+    ========================= */
+
+    document
+        .querySelectorAll(".difficulty-option")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(".difficulty-option")
+                        .forEach(item =>
+                            item.classList.remove("active")
+                        );
+
+
+                    button.classList.add("active");
+
+                    difficulty =
+                        button.dataset.mode;
+
+                }
+            );
+
+        });
+
+
+    /* =========================
+       NUMBER GENERATOR
+    ========================= */
+
+    function generateNumber() {
+
+        if (difficulty === "easy") {
+
+            const easyPool = [];
+
+            for (
+                let i = 10;
+                i <= 90;
+                i++
+            ) {
+
+                const distanceFromMiddle =
+                    Math.abs(i - 50);
+
+                const weight =
+                    Math.max(
+                        1,
+                        8 - Math.floor(
+                            distanceFromMiddle / 8
+                        )
+                    );
+
+
+                for (
+                    let j = 0;
+                    j < weight;
+                    j++
+                ) {
+
+                    easyPool.push(i);
+
+                }
+
+            }
+
+
+            return easyPool[
+                Math.floor(
+                    Math.random() *
+                    easyPool.length
+                )
+            ];
+
+        }
+
+
+        return Math.floor(
+            Math.random() * 100
+        ) + 1;
+
+    }
+
+
+    /* =========================
+       START GAME
+    ========================= */
+
+    startButton.addEventListener(
+        "click",
+        startGame
+    );
+
+
+    function startGame() {
+
+        currentRound = 1;
+
+        total = 0;
+
+        totalSurrendered = 0;
+
+        surrenderPenalty = 0;
+
+        startScreen.style.display =
+            "none";
+
+        resultScreen.classList.remove(
+            "active"
+        );
+
+        roundResultScreen.classList.remove(
+            "active"
+        );
+
+        gameArea.classList.add(
+            "active"
+        );
+
+        startRound();
+
+    }
+
+
+    /* =========================
+       START ROUND
+    ========================= */
+
+    function startRound() {
+
+        secretNumber =
+            generateNumber();
+
+        attempts = 0;
+
+        cluesLeft = 3;
+
+        cluesUsedThisRound = 0;
+
+        usedNumbers.clear();
+
+
+        clueUsed = {
+            range: false,
+            odd: false,
+            half: false
+        };
+
+
+        roundNumber.textContent =
+            currentRound;
+
+        attemptCount.textContent =
+            "0";
+
+        clueCount.textContent =
+            "3";
+
+
+        document
+            .querySelectorAll(".clue-button")
+            .forEach(button => {
+
+                button.disabled = false;
+
+
+                if (
+                    button.dataset.clue === "range"
+                ) {
+
+                    button.textContent =
+                        "🔎 Rentang";
+
+                } else if (
+                    button.dataset.clue === "odd"
+                ) {
+
+                    button.textContent =
+                        "🔢 Ganjil / Genap";
+
+                } else {
+
+                    button.textContent =
+                        "📍 Bagian angka";
+
+                }
+
+            });
+
+
+        gameEmoji.textContent =
+            "🤔";
+
+
+        setMessage(
+            "🤨",
+            "Silakan buat keputusan yang mungkin akan kamu sesali."
+        );
+
+
+        numberInput.value = "";
+
+        guessButton.disabled = false;
+
+        giveUpButton.disabled = false;
+
+        numberInput.disabled = false;
+
+        numberInput.focus();
+
+    }
+
+
+    /* =========================
+       MESSAGE
+    ========================= */
+
+    function setMessage(
+        emoji,
+        text
+    ) {
+
+        messageEmoji.textContent =
+            emoji;
+
+        messageText.textContent =
+            text;
+
+    }
+
+
+    /* =========================
+       GUESS
+    ========================= */
+
+    guessButton.addEventListener(
+        "click",
+        guess
+    );
+
+
+    numberInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                guess();
+
+            }
+
+        }
+    );
+
+
+    function guess() {
+
+        const value =
+            Number(
+                numberInput.value
+            );
+
+
+        if (
+            !Number.isInteger(value) ||
+            value < 1 ||
+            value > 100
+        ) {
+
+            setMessage(
+                "🤨",
+                "Masukkan angka bulat dari 1 sampai 100."
+            );
+
+            numberInput.focus();
+
+            return;
+
+        }
+
+
+        if (
+            usedNumbers.has(value)
+        ) {
+
+            setMessage(
+                "🙄",
+                "Angka itu sudah kamu tebak. Yakin mau mengulang sejarah?"
+            );
+
+            numberInput.select();
+
+            return;
+
+        }
+
+
+        usedNumbers.add(value);
+
+        attempts++;
+
+        total++;
+
+        attemptCount.textContent =
+            attempts;
+
+
+        /* =========================
+           CORRECT
+        ========================= */
+
+        if (
+            value === secretNumber
+        ) {
+
+            setMessage(
+                "🎉",
+                "BENAR. Aku sebenarnya berharap kamu salah lebih lama."
+            );
+
+            gameEmoji.textContent =
+                "😳";
+
+
+            guessButton.disabled = true;
+
+            giveUpButton.disabled = true;
+
+            numberInput.disabled = true;
+
+
+            showRoundResult(false);
+
+            return;
+
+        }
+
+
+        /* =========================
+           WRONG
+        ========================= */
+
+        const reactions = [
+
+            ["🤨", "Yakin dengan pilihan itu?"],
+
+            ["😏", "Menarik. Sangat menarik."],
+
+            ["👀", "Hmm... mungkin."],
+
+            ["🗿", "Aku tidak akan berkomentar."],
+
+            ["😭", "Kenapa angka itu? 😭"],
+
+            ["🙂", "Bisa jadi."],
+
+            ["🤔", "Mungkin dekat. Mungkin juga tidak."],
+
+            ["😌", "Jangan terlalu percaya diri."],
+
+            ["😳", "Tunggu..."],
+
+            ["😈", "Lanjutkan."],
+
+            ["🙄", "Itu jawabanmu?"],
+
+            ["🤭", "Aku punya firasat. Tapi aku tidak akan memberitahumu."]
+
+        ];
+
+
+        const reaction =
+            reactions[
+                Math.floor(
+                    Math.random() *
+                    reactions.length
+                )
+            ];
+
+
+        setMessage(
+            reaction[0],
+            reaction[1]
+        );
+
+
+        numberInput.select();
+
+    }
+
+
+    /* =========================
+       GIVE UP
+    ========================= */
+
+    giveUpButton.addEventListener(
+        "click",
+        giveUp
+    );
+
+
+    function giveUp() {
+
+        const firstConfirm =
+            confirm(
+                "Yakin mau menyerah?\n\nMesin akan mengingat keputusan ini. 🗿"
+            );
+
+
+        if (!firstConfirm) {
+
+            setMessage(
+                "😏",
+                "Hampir saja. Ayo lanjut."
+            );
+
+            return;
+
+        }
+
+
+        const secondConfirm =
+            confirm(
+                "Serius?\n\nMenyerah akan mendapat PENALTI +25 percobaan di hasil akhir. 😭"
+            );
+
+
+        if (!secondConfirm) {
+
+            setMessage(
+                "😌",
+                "Nah. Begitu dong. Lanjutkan perjuangan."
+            );
+
+            return;
+
+        }
+
+
+        totalSurrendered++;
+
+        surrenderPenalty += 25;
+
+
+        guessButton.disabled = true;
+
+        giveUpButton.disabled = true;
+
+        numberInput.disabled = true;
+
+
+        setMessage(
+            "🏳️",
+            "Baiklah. Kamu menyerah. Aku catat."
+        );
+
+
+        gameEmoji.textContent =
+            "🗿";
+
+
+        showRoundResult(true);
+
+    }
+
+
+    /* =========================
+       CLUES
+    ========================= */
+
+    document
+        .querySelectorAll(".clue-button")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    useClue(
+                        button.dataset.clue,
+                        button
+                    );
+
+                }
+            );
+
+        });
+
+
+    function useClue(
+        type,
+        button
+    ) {
+
+        if (
+            cluesLeft <= 0 ||
+            clueUsed[type]
+        ) {
+
+            return;
+
+        }
+
+
+        clueUsed[type] = true;
+
+        cluesLeft--;
+
+        cluesUsedThisRound++;
+
+        clueCount.textContent =
+            cluesLeft;
+
+        roundClues.textContent =
+            `${cluesUsedThisRound} / 3`;
+
+        button.disabled = true;
+
+
+        /* =========================
+           RANGE CLUE
+        ========================= */
+
+        if (
+            type === "range"
+        ) {
+
+            const rangeSize =
+                difficulty === "easy"
+                    ? 20
+                    : 30;
+
+
+            let lower =
+                secretNumber -
+                Math.floor(
+                    rangeSize / 2
+                );
+
+
+            let upper =
+                lower +
+                rangeSize;
+
+
+            if (
+                lower < 1
+            ) {
+
+                lower = 1;
+
+                upper =
+                    Math.min(
+                        100,
+                        lower + rangeSize
+                    );
+
+            }
+
+
+            if (
+                upper > 100
+            ) {
+
+                upper = 100;
+
+                lower =
+                    Math.max(
+                        1,
+                        upper - rangeSize
+                    );
+
+            }
+
+
+            setMessage(
+                "🔎",
+                `Aku kasih tahu sedikit: angkanya ada di antara ${lower}–${upper}.`
+            );
+
+
+            button.textContent =
+                "✓ Rentang";
+
+        }
+
+
+        /* =========================
+           ODD / EVEN
+        ========================= */
+
+        if (
+            type === "odd"
+        ) {
+
+            const parity =
+                secretNumber % 2 === 0
+                    ? "GENAP"
+                    : "GANJIL";
+
+
+            setMessage(
+                "🔢",
+                `Baiklah. Angkanya ${parity}.`
+            );
+
+
+            button.textContent =
+                "✓ Ganjil / Genap";
+
+        }
+
+
+        /* =========================
+           QUARTER
+        ========================= */
+
+        if (
+            type === "half"
+        ) {
+
+            let text;
+
+
+            if (
+                secretNumber <= 25
+            ) {
+
+                text =
+                    "Angkanya ada di bagian 1–25.";
+
+            } else if (
+                secretNumber <= 50
+            ) {
+
+                text =
+                    "Angkanya ada di bagian 26–50.";
+
+            } else if (
+                secretNumber <= 75
+            ) {
+
+                text =
+                    "Angkanya ada di bagian 51–75.";
+
+            } else {
+
+                text =
+                    "Angkanya ada di bagian 76–100.";
+
+            }
+
+
+            setMessage(
+                "📍",
+                text
+            );
+
+
+            button.textContent =
+                "✓ Bagian angka";
+
+        }
+
+    }
+
+
+    /* =========================
+       ROUND RESULT
+    ========================= */
+
+    function showRoundResult(
+        surrendered = false
+    ) {
+
+        gameArea.classList.remove(
+            "active"
+        );
+
+        roundResultScreen.classList.add(
+            "active"
+        );
+
+
+        correctNumber.textContent =
+            secretNumber;
+
+        roundAttempts.textContent =
+            surrendered
+                ? "Nyerah"
+                : attempts;
+
+        roundClues.textContent =
+            `${cluesUsedThisRound} / 3`;
+
+
+        if (surrendered) {
+
+            roundResultEmoji.textContent =
+                "🏳️";
+
+            roundResultTitle.textContent =
+                "Menyerah.";
+
+            roundResultText.innerHTML =
+                `
+                Angkanya sebenarnya
+                <strong>${secretNumber}</strong>.
+                <br>
+                Mesin memberikan penalti
+                <strong>+25 percobaan</strong>
+                untuk keputusan ini. 🗿
+                `;
+
+        } else {
+
+            roundResultEmoji.textContent =
+                "🎉";
+
+            roundResultTitle.textContent =
+                "Ketemu.";
+
+            roundResultText.textContent =
+                "Kamu berhasil menemukan angka rahasianya. Berikut hasil ronde ini.";
+
+        }
+
+
+        if (
+            currentRound >= 4
+        ) {
+
+            nextRoundButton.textContent =
+                "Lihat hasil akhir →";
+
+        } else {
+
+            nextRoundButton.textContent =
+                `Lanjut ke ronde ${currentRound + 1} →`;
+
+        }
+
+    }
+
+
+    /* =========================
+       NEXT ROUND
+    ========================= */
+
+    nextRoundButton.addEventListener(
+        "click",
+        () => {
+
+            roundResultScreen.classList.remove(
+                "active"
+            );
+
+
+            if (
+                currentRound >= 4
+            ) {
+
+                finishGame();
+
+                return;
+
+            }
+
+
+            currentRound++;
+
+            gameArea.classList.add(
+                "active"
+            );
+
+            startRound();
+
+        }
+    );
+
+
+    /* =========================
+       FINISH
+    ========================= */
+
+    function finishGame() {
+
+        gameArea.classList.remove(
+            "active"
+        );
+
+        roundResultScreen.classList.remove(
+            "active"
+        );
+
+        resultScreen.classList.add(
+            "active"
+        );
+
+
+        const finalScore =
+            total + surrenderPenalty;
+
+
+        totalAttempts.textContent =
+            finalScore;
+
+        totalSurrenders.textContent =
+            totalSurrendered;
+
+        rankName.textContent =
+            getRank(
+                finalScore,
+                totalSurrendered
+            );
+
+
+        if (
+            totalSurrendered === 0
+        ) {
+
+            finalEmoji.textContent =
+                "🏆";
+
+        } else if (
+            totalSurrendered === 1
+        ) {
+
+            finalEmoji.textContent =
+                "😏";
+
+        } else if (
+            totalSurrendered === 2
+        ) {
+
+            finalEmoji.textContent =
+                "🗿";
+
+        } else {
+
+            finalEmoji.textContent =
+                "😭";
+
+        }
+
+    }
+
+
+    /* =========================
+       RANKS
+    ========================= */
+
+    function getRank(
+        score,
+        surrenders
+    ) {
+
+        /*
+            Menyerah diberi penilaian
+            lebih buruk daripada sekadar
+            banyak mencoba.
+        */
+
+        if (
+            surrenders >= 4
+        ) {
+
+            return "🏳️ CEO Tombol Nyerah";
+
+        }
+
+
+        if (
+            surrenders >= 3
+        ) {
+
+            return "😭 Investor di Perusahaan Menyerah";
+
+        }
+
+
+        if (
+            surrenders >= 2
+        ) {
+
+            return "🗿 Spesialis Angkat Tangan";
+
+        }
+
+
+        if (
+            surrenders === 1 &&
+            score > 50
+        ) {
+
+            return "🤡 Hampir Jadi Pejuang";
+
+        }
+
+
+        if (
+            score <= 10
+        ) {
+
+            return "🧠 Pembaca Pikiran";
+
+        }
+
+
+        if (
+            score <= 25
+        ) {
+
+            return "🎯 Penembak Jitu";
+
+        }
+
+
+        if (
+            score <= 50
+        ) {
+
+            return "😎 Lumayan Jago";
+
+        }
+
+
+        if (
+            score <= 75
+        ) {
+
+            return "🤔 Pejuang Angka";
+
+        }
+
+
+        if (
+            score <= 100
+        ) {
+
+            return "😭 Pantang Menyerah";
+
+        }
+
+
+        if (
+            score <= 125
+        ) {
+
+            return "🗿 Teman Dekat Mesin";
+
+        }
+
+
+        if (
+            score <= 150
+        ) {
+
+            return "🧌 Penghuni Kolom Input";
+
+        }
+
+
+        if (
+            score <= 200
+        ) {
+
+            return "🐌 Kecepatan Tidak Ditemukan";
+
+        }
+
+
+        return "👑 CEO Percobaan";
+
+    }
+
+
+    /* =========================
+       RESTART
+    ========================= */
+
+    restartButton.addEventListener(
+        "click",
+        () => {
+
+            resultScreen.classList.remove(
+                "active"
+            );
+
+            roundResultScreen.classList.remove(
+                "active"
+            );
+
+            gameArea.classList.remove(
+                "active"
+            );
+
+            startScreen.style.display =
+                "block";
+
+            roundNumber.textContent =
+                "0";
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
