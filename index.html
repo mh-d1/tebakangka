@@ -151,7 +151,23 @@
         }
 
         .emoji.pop {
-            transform: scale(1.08) rotate(-3deg);
+            animation: emojiPop .28s ease;
+        }
+
+        @keyframes emojiPop {
+
+            0% {
+                transform: scale(1);
+            }
+
+            45% {
+                transform: scale(1.12) rotate(-3deg);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+
         }
 
         h1 {
@@ -336,6 +352,46 @@
         }
 
         /* =========================
+           GIVE UP
+        ========================= */
+
+        .give-up-button {
+            width: 100%;
+
+            margin-top: 8px;
+
+            border: 1px solid var(--line);
+            border-radius: 15px;
+
+            padding: 12px;
+
+            background: transparent;
+            color: var(--muted);
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition:
+                color .2s ease,
+                background .2s ease,
+                border-color .2s ease;
+        }
+
+        .give-up-button:hover {
+            color: var(--accent);
+
+            background: var(--accent-soft);
+
+            border-color: var(--accent);
+        }
+
+        .give-up-button:disabled {
+            opacity: .45;
+
+            cursor: not-allowed;
+        }
+
+        /* =========================
            MESSAGE
         ========================= */
 
@@ -360,6 +416,30 @@
 
             font-size: 14px;
             font-weight: 700;
+
+            transition:
+                transform .2s ease,
+                border-color .2s ease;
+        }
+
+        .message.pop {
+            animation: messagePop .25s ease;
+        }
+
+        @keyframes messagePop {
+
+            0% {
+                transform: scale(.98);
+            }
+
+            55% {
+                transform: scale(1.015);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+
         }
 
         .message-emoji {
@@ -498,11 +578,14 @@
             font-weight: 800;
 
             transition:
-                transform .2s ease;
+                transform .2s ease,
+                background .2s ease;
         }
 
         .start-button:hover {
             transform: translateY(-2px);
+
+            background: #333333;
         }
 
         /* =========================
@@ -621,6 +704,7 @@
 
         .next-round-button:hover {
             transform: translateY(-2px);
+
             background: #333333;
         }
 
@@ -708,12 +792,21 @@
         @media (max-width: 560px) {
 
             body {
-                padding: 14px;
+                padding: 10px;
+
+                align-items: flex-start;
+            }
+
+            .header {
+                padding:
+                    8px 4px 14px;
             }
 
             .game-card {
                 border-radius: 20px;
-                padding: 24px 18px;
+
+                padding:
+                    20px 16px;
             }
 
             .difficulty {
@@ -735,6 +828,178 @@
             .round-stats {
                 grid-template-columns: 1fr 1fr;
             }
+
+            /*
+                Game layout mobile:
+                emoji dipindahkan secara visual
+                lebih dekat ke input.
+            */
+
+            .game-area.active {
+                display: flex;
+
+                flex-direction: column;
+            }
+
+            .game-area .intro {
+                display: contents;
+            }
+
+            .game-area .intro .emoji {
+                order: 3;
+
+                width: 56px;
+                height: 56px;
+
+                margin:
+                    18px auto 10px;
+
+                border-radius: 17px;
+
+                font-size: 28px;
+            }
+
+            .game-area .intro h1 {
+                order: 1;
+
+                font-size: 34px;
+            }
+
+            .game-area .intro .subtitle {
+                order: 2;
+
+                margin-top: 10px;
+
+                font-size: 13px;
+
+                line-height: 1.55;
+            }
+
+            .game-area .status-row {
+                order: 4;
+
+                margin-top: 10px;
+
+                padding-bottom: 12px;
+            }
+
+            .game-area .number-input {
+                order: 5;
+
+                margin-top: 14px;
+
+                padding: 16px;
+
+                font-size: 32px;
+
+                border-radius: 15px;
+            }
+
+            .game-area .guess-button {
+                order: 6;
+
+                margin-top: 8px;
+            }
+
+            .game-area .give-up-button {
+                order: 7;
+
+                margin-top: 7px;
+            }
+
+            .game-area .message {
+                order: 8;
+
+                min-height: 58px;
+
+                margin-top: 14px;
+
+                padding: 13px;
+
+                font-size: 13px;
+            }
+
+            .game-area .clues {
+                order: 9;
+
+                margin-top: 18px;
+            }
+
+            .number-input:focus {
+                box-shadow:
+                    0 0 0 3px var(--accent-soft);
+            }
+
+            .message-emoji {
+                font-size: 20px;
+            }
+
+            .round-result .emoji,
+            .result .emoji {
+                width: 62px;
+                height: 62px;
+
+                margin-bottom: 18px;
+
+                font-size: 30px;
+            }
+
+            .round-result-title,
+            .result-title {
+                font-size: 40px;
+            }
+
+            .round-result-score,
+            .result-score {
+                font-size: 14px;
+            }
+
+            .round-number-box {
+                width: 86px;
+                height: 86px;
+
+                margin-top: 22px;
+
+                font-size: 32px;
+            }
+
+            .next-round-button {
+                margin-top: 20px;
+            }
+
+        }
+
+        /* =========================
+           VERY SMALL DEVICES
+        ========================= */
+
+        @media (max-width: 360px) {
+
+            body {
+                padding: 7px;
+            }
+
+            .game-card {
+                padding:
+                    18px 14px;
+            }
+
+            .game-area .intro h1 {
+                font-size: 31px;
+            }
+
+            .game-area .intro .subtitle {
+                font-size: 12px;
+            }
+
+            .number-input {
+                font-size: 30px;
+            }
+
+            .message {
+                font-size: 12px;
+            }
+
         }
     </style>
 </head>
@@ -959,6 +1224,15 @@
             </button>
 
 
+            <button
+                class="give-up-button"
+                id="giveUpButton"
+                type="button"
+            >
+                Nyerah aja
+            </button>
+
+
             <div
                 class="message"
                 id="message"
@@ -1038,15 +1312,24 @@
             id="roundResultScreen"
         >
 
-            <div class="emoji">
+            <div
+                class="emoji"
+                id="roundResultEmoji"
+            >
                 🎉
             </div>
 
-            <h1 class="round-result-title">
+            <h1
+                class="round-result-title"
+                id="roundResultTitle"
+            >
                 Ketemu.
             </h1>
 
-            <p class="round-result-score">
+            <p
+                class="round-result-score"
+                id="roundResultText"
+            >
                 Kamu berhasil menemukan angka rahasianya.
                 Berikut hasil ronde ini.
             </p>
@@ -1116,7 +1399,10 @@
             id="resultScreen"
         >
 
-            <div class="emoji">
+            <div
+                class="emoji"
+                id="finalEmoji"
+            >
                 🏆
             </div>
 
@@ -1197,11 +1483,17 @@
     const guessButton =
         document.getElementById("guessButton");
 
+    const giveUpButton =
+        document.getElementById("giveUpButton");
+
     const attemptCount =
         document.getElementById("attemptCount");
 
     const roundNumber =
         document.getElementById("roundNumber");
+
+    const message =
+        document.getElementById("message");
 
     const messageEmoji =
         document.getElementById("messageEmoji");
@@ -1230,6 +1522,21 @@
     const roundClues =
         document.getElementById("roundClues");
 
+    const roundResultEmoji =
+        document.getElementById(
+            "roundResultEmoji"
+        );
+
+    const roundResultTitle =
+        document.getElementById(
+            "roundResultTitle"
+        );
+
+    const roundResultText =
+        document.getElementById(
+            "roundResultText"
+        );
+
 
     /* =========================
        GAME STATE
@@ -1250,6 +1557,8 @@
     let cluesUsedThisRound = 0;
 
     let usedNumbers = new Set();
+
+    let gaveUp = false;
 
     let clueUsed = {
         range: false,
@@ -1297,6 +1606,220 @@
     };
 
 
+    /* =========================
+       MESSAGE POOL
+    ========================= */
+
+    const wrongMessages = [
+
+        ["🤨", "Yakin dengan pilihan itu?"],
+
+        ["😏", "Menarik. Sangat menarik."],
+
+        ["👀", "Hmm... mungkin."],
+
+        ["🗿", "Aku tidak akan berkomentar."],
+
+        ["😭", "Kenapa angka itu?"],
+
+        ["🙂", "Bisa jadi."],
+
+        ["🤔", "Mungkin dekat. Mungkin juga tidak."],
+
+        ["😌", "Jangan terlalu percaya diri."],
+
+        ["😳", "Tunggu..."],
+
+        ["😈", "Lanjutkan."],
+
+        ["🙄", "Itu jawabanmu?"],
+
+        ["🤭", "Aku punya firasat. Tapi aku tidak akan memberitahumu."],
+
+        ["🧐", "Aku sedang mempertimbangkan untuk percaya padamu."],
+
+        ["😶", "Aku memilih diam."],
+
+        ["🥱", "Kita masih punya waktu."],
+
+        ["🫠", "Oke... kita coba lagi."],
+
+        ["😎", "Percaya diri sekali."],
+
+        ["🤏", "Belum tentu. Tapi ya... belum tentu."],
+
+        ["😮", "Angka yang cukup berani."],
+
+        ["😌", "Aku suka optimisme seperti ini."],
+
+        ["👁️", "Aku melihat pilihanmu."],
+
+        ["🫡", "Dicatat. Tidak dilupakan."],
+
+        ["😅", "Mari kita pura-pura itu tebakan bagus."],
+
+        ["🤐", "Aku tahu sesuatu. Tapi tidak akan kubilang."],
+
+        ["😈", "Teruskan. Ini mulai menarik."],
+
+        ["🧐", "Ada yang mencurigakan dari angka itu."],
+
+        ["🙂‍↔️", "Bukan begitu caranya."],
+
+        ["😶‍🌫️", "Aku akan membuat ini sedikit lebih sulit untukmu."],
+
+        ["🤨", "Kamu benar-benar memilih angka itu?"],
+
+        ["🫣", "Aku tidak tega bilang apa-apa."]
+
+    ];
+
+
+    const giveUpMessages = [
+
+        ["🏳️", "Baiklah. Aku menang. Angkanya tadi sebenarnya tidak seburuk itu."],
+
+        ["😌", "Nyerah juga akhirnya. Aku sudah mulai khawatir kamu tidak akan berhenti."],
+
+        ["🤭", "Menyerah? Padahal angkanya sedang menunggumu."],
+
+        ["🫡", "Keputusan yang berani. Tidak tepat, tapi berani."],
+
+        ["😈", "Aku terima penyerahanmu."],
+
+        ["😭", "Yah... padahal tinggal sedikit lagi. Mungkin."],
+
+        ["🙂", "Tidak apa-apa. Mesin ini tidak akan menghakimi. Banyak."],
+
+        ["🗿", "Baik. Kita anggap ini strategi."],
+
+        ["👀", "Kamu yakin? Ini kesempatan terakhir untuk pura-pura jago."],
+
+        ["🏃", "Kabur dari angka memang lebih mudah daripada menebaknya."],
+
+        ["😮‍💨", "Akhirnya kita bisa sama-sama istirahat."],
+
+        ["🤷", "Aku menghormati keputusanmu. Sedikit."],
+
+        ["😏", "Aku tahu kamu akan menyerah."],
+
+        ["🫠", "Dan begitu saja... perjuangan berakhir."],
+
+        ["🥲", "Setidaknya kamu sudah mencoba. Itu dihitung secara emosional."]
+
+    ];
+
+
+    const invalidMessages = [
+
+        ["🤨", "Masukkan angka bulat dari 1 sampai 100."],
+
+        ["🧐", "Itu bukan angka yang bisa kita pertanggungjawabkan."],
+
+        ["😐", "Aku meminta angka. Bukan teka-teki baru."],
+
+        ["👀", "Angkanya harus antara 1 dan 100."],
+
+        ["🤏", "Sedikit lagi. Masukkan angka yang benar."]
+
+    ];
+
+
+    const duplicateMessages = [
+
+        ["🙄", "Angka itu sudah kamu tebak. Yakin mau mengulang sejarah?"],
+
+        ["🗿", "Kita sudah membahas angka itu."],
+
+        ["🤨", "Angka yang sama lagi? Aku ingat, lho."],
+
+        ["😌", "Aku menghargai konsistensi. Tapi itu tetap salah."],
+
+        ["👀", "Kamu benar-benar mencoba angka yang sama lagi?"],
+
+        ["🤭", "Memori mesin ini ternyata lebih baik dari yang kamu kira."],
+
+        ["🧐", "Sudah pernah. Coba cari ide baru."]
+
+    ];
+
+
+    /* =========================
+       RANDOM MESSAGE
+    ========================= */
+
+    function randomItem(
+        array
+    ) {
+
+        return array[
+            Math.floor(
+                Math.random() *
+                array.length
+            )
+        ];
+
+    }
+
+
+    /* =========================
+       MESSAGE
+       + SMALL ANIMATION
+    ========================= */
+
+    function setMessage(
+        emoji,
+        text
+    ) {
+
+        messageEmoji.textContent =
+            emoji;
+
+        messageText.textContent =
+            text;
+
+
+        message.classList.remove(
+            "pop"
+        );
+
+        void message.offsetWidth;
+
+        message.classList.add(
+            "pop"
+        );
+
+    }
+
+
+    /* =========================
+       EMOJI ANIMATION
+    ========================= */
+
+    function setGameEmoji(
+        emoji
+    ) {
+
+        gameEmoji.textContent =
+            emoji;
+
+        gameEmoji.classList.remove(
+            "pop"
+        );
+
+        void gameEmoji.offsetWidth;
+
+        gameEmoji.classList.add(
+            "pop"
+        );
+
+    }
+
+
+    /* =========================
+       THEMES
+    ========================= */
+
     document
         .querySelectorAll(".theme")
         .forEach(button => {
@@ -1306,7 +1829,9 @@
                 () => {
 
                     const theme =
-                        themes[button.dataset.theme];
+                        themes[
+                            button.dataset.theme
+                        ];
 
 
                     document.documentElement.style.setProperty(
@@ -1328,11 +1853,15 @@
                     document
                         .querySelectorAll(".theme")
                         .forEach(item =>
-                            item.classList.remove("active")
+                            item.classList.remove(
+                                "active"
+                            )
                         );
 
 
-                    button.classList.add("active");
+                    button.classList.add(
+                        "active"
+                    );
 
                 }
             );
@@ -1353,13 +1882,19 @@
                 () => {
 
                     document
-                        .querySelectorAll(".difficulty-option")
+                        .querySelectorAll(
+                            ".difficulty-option"
+                        )
                         .forEach(item =>
-                            item.classList.remove("active")
+                            item.classList.remove(
+                                "active"
+                            )
                         );
 
 
-                    button.classList.add("active");
+                    button.classList.add(
+                        "active"
+                    );
 
                     difficulty =
                         button.dataset.mode;
@@ -1376,7 +1911,9 @@
 
     function generateNumber() {
 
-        if (difficulty === "easy") {
+        if (
+            difficulty === "easy"
+        ) {
 
             const easyPool = [];
 
@@ -1387,12 +1924,15 @@
             ) {
 
                 const distanceFromMiddle =
-                    Math.abs(i - 50);
+                    Math.abs(
+                        i - 50
+                    );
 
                 const weight =
                     Math.max(
                         1,
-                        8 - Math.floor(
+                        8 -
+                        Math.floor(
                             distanceFromMiddle / 8
                         )
                     );
@@ -1404,7 +1944,9 @@
                     j++
                 ) {
 
-                    easyPool.push(i);
+                    easyPool.push(
+                        i
+                    );
 
                 }
 
@@ -1479,6 +2021,8 @@
 
         cluesUsedThisRound = 0;
 
+        gaveUp = false;
+
         usedNumbers.clear();
 
 
@@ -1503,24 +2047,31 @@
             .querySelectorAll(".clue-button")
             .forEach(button => {
 
-                button.disabled = false;
+                button.disabled =
+                    false;
 
 
                 if (
-                    button.dataset.clue === "range"
+                    button.dataset.clue ===
+                    "range"
                 ) {
 
                     button.textContent =
                         "🔎 Rentang";
 
-                } else if (
-                    button.dataset.clue === "odd"
+                }
+
+                else if (
+                    button.dataset.clue ===
+                    "odd"
                 ) {
 
                     button.textContent =
                         "🔢 Ganjil / Genap";
 
-                } else {
+                }
+
+                else {
 
                     button.textContent =
                         "📍 Bagian angka";
@@ -1530,8 +2081,9 @@
             });
 
 
-        gameEmoji.textContent =
-            "🤔";
+        setGameEmoji(
+            "🤔"
+        );
 
 
         setMessage(
@@ -1540,31 +2092,81 @@
         );
 
 
-        numberInput.value = "";
+        numberInput.value =
+            "";
 
-        guessButton.disabled = false;
+        guessButton.disabled =
+            false;
 
-        numberInput.disabled = false;
+        giveUpButton.disabled =
+            false;
 
-        numberInput.focus();
+        numberInput.disabled =
+            false;
+
+
+        giveUpButton.textContent =
+            "Nyerah aja";
+
+
+        /*
+            Fokus otomatis hanya pada
+            perangkat yang tidak sedang
+            berusaha membuka keyboard
+            secara aneh.
+        */
+
+        setTimeout(
+            () => {
+
+                numberInput.focus();
+
+            },
+            80
+        );
 
     }
 
 
     /* =========================
-       MESSAGE
+       UPDATE GIVE UP BUTTON
     ========================= */
 
-    function setMessage(
-        emoji,
-        text
-    ) {
+    function updateGiveUpText() {
 
-        messageEmoji.textContent =
-            emoji;
+        if (
+            attempts >= 10
+        ) {
 
-        messageText.textContent =
-            text;
+            giveUpButton.textContent =
+                "Aku sudah cukup menderita";
+
+        }
+
+        else if (
+            attempts >= 7
+        ) {
+
+            giveUpButton.textContent =
+                "Boleh nyerah sekarang?";
+
+        }
+
+        else if (
+            attempts >= 4
+        ) {
+
+            giveUpButton.textContent =
+                "Mulai menyerah";
+
+        }
+
+        else {
+
+            giveUpButton.textContent =
+                "Nyerah aja";
+
+        }
 
     }
 
@@ -1603,16 +2205,32 @@
             );
 
 
+        /* =========================
+           INVALID
+        ========================= */
+
         if (
             !Number.isInteger(value) ||
             value < 1 ||
             value > 100
         ) {
 
+            const reaction =
+                randomItem(
+                    invalidMessages
+                );
+
+
             setMessage(
-                "🤨",
-                "Masukkan angka bulat dari 1 sampai 100."
+                reaction[0],
+                reaction[1]
             );
+
+
+            setGameEmoji(
+                reaction[0]
+            );
+
 
             numberInput.focus();
 
@@ -1621,19 +2239,30 @@
         }
 
 
-        /*
-            Angka yang sama tidak dihitung
-            sebagai percobaan baru.
-        */
+        /* =========================
+           DUPLICATE
+        ========================= */
 
         if (
             usedNumbers.has(value)
         ) {
 
+            const reaction =
+                randomItem(
+                    duplicateMessages
+                );
+
+
             setMessage(
-                "🙄",
-                "Angka itu sudah kamu tebak. Yakin mau mengulang sejarah?"
+                reaction[0],
+                reaction[1]
             );
+
+
+            setGameEmoji(
+                reaction[0]
+            );
+
 
             numberInput.select();
 
@@ -1642,7 +2271,9 @@
         }
 
 
-        usedNumbers.add(value);
+        usedNumbers.add(
+            value
+        );
 
         attempts++;
 
@@ -1650,6 +2281,9 @@
 
         attemptCount.textContent =
             attempts;
+
+
+        updateGiveUpText();
 
 
         /* =========================
@@ -1665,13 +2299,20 @@
                 "BENAR. Aku sebenarnya berharap kamu salah lebih lama."
             );
 
-            gameEmoji.textContent =
-                "😳";
+
+            setGameEmoji(
+                "😳"
+            );
 
 
-            guessButton.disabled = true;
+            guessButton.disabled =
+                true;
 
-            numberInput.disabled = true;
+            giveUpButton.disabled =
+                true;
+
+            numberInput.disabled =
+                true;
 
 
             showRoundResult();
@@ -1685,42 +2326,10 @@
            WRONG
         ========================= */
 
-        const reactions = [
-
-            ["🤨", "Yakin dengan pilihan itu?"],
-
-            ["😏", "Menarik. Sangat menarik."],
-
-            ["👀", "Hmm... mungkin."],
-
-            ["🗿", "Aku tidak akan berkomentar."],
-
-            ["😭", "Kenapa angka itu? 😭"],
-
-            ["🙂", "Bisa jadi."],
-
-            ["🤔", "Mungkin dekat. Mungkin juga tidak."],
-
-            ["😌", "Jangan terlalu percaya diri."],
-
-            ["😳", "Tunggu..."],
-
-            ["😈", "Lanjutkan."],
-
-            ["🙄", "Itu jawabanmu?"],
-
-            ["🤭", "Aku punya firasat. Tapi aku tidak akan memberitahumu."]
-
-        ];
-
-
         const reaction =
-            reactions[
-                Math.floor(
-                    Math.random() *
-                    reactions.length
-                )
-            ];
+            randomItem(
+                wrongMessages
+            );
 
 
         setMessage(
@@ -1729,7 +2338,67 @@
         );
 
 
+        setGameEmoji(
+            reaction[0]
+        );
+
+
         numberInput.select();
+
+    }
+
+
+    /* =========================
+       GIVE UP
+    ========================= */
+
+    giveUpButton.addEventListener(
+        "click",
+        giveUp
+    );
+
+
+    function giveUp() {
+
+        const reaction =
+            randomItem(
+                giveUpMessages
+            );
+
+
+        gaveUp =
+            true;
+
+
+        setMessage(
+            reaction[0],
+            reaction[1]
+        );
+
+
+        setGameEmoji(
+            reaction[0]
+        );
+
+
+        guessButton.disabled =
+            true;
+
+        giveUpButton.disabled =
+            true;
+
+        numberInput.disabled =
+            true;
+
+
+        setTimeout(
+            () => {
+
+                showRoundResult();
+
+            },
+            700
+        );
 
     }
 
@@ -1772,19 +2441,24 @@
         }
 
 
-        clueUsed[type] = true;
+        clueUsed[type] =
+            true;
 
         cluesLeft--;
 
         cluesUsedThisRound++;
 
+
         clueCount.textContent =
             cluesLeft;
+
 
         roundClues.textContent =
             `${cluesUsedThisRound} / 3`;
 
-        button.disabled = true;
+
+        button.disabled =
+            true;
 
 
         /* =========================
@@ -1817,12 +2491,14 @@
                 lower < 1
             ) {
 
-                lower = 1;
+                lower =
+                    1;
 
                 upper =
                     Math.min(
                         100,
-                        lower + rangeSize
+                        lower +
+                        rangeSize
                     );
 
             }
@@ -1832,20 +2508,42 @@
                 upper > 100
             ) {
 
-                upper = 100;
+                upper =
+                    100;
 
                 lower =
                     Math.max(
                         1,
-                        upper - rangeSize
+                        upper -
+                        rangeSize
                     );
 
             }
 
 
+            const clueMessages = [
+
+                `Aku kasih sedikit bantuan: angkanya ada di antara ${lower}–${upper}.`,
+
+                `Baiklah. Aku buka sedikit rahasia: ${lower}–${upper}.`,
+
+                `Jangan bilang aku tidak pernah membantu. Cari di ${lower}–${upper}.`,
+
+                `Petunjuk kecil: wilayahnya ${lower}–${upper}. Selamat berburu.`
+
+            ];
+
+
             setMessage(
                 "🔎",
-                `Aku kasih tahu sedikit: angkanya ada di antara ${lower}–${upper}.`
+                randomItem(
+                    clueMessages
+                )
+            );
+
+
+            setGameEmoji(
+                "🔎"
             );
 
 
@@ -1869,9 +2567,29 @@
                     : "GANJIL";
 
 
+            const clueMessages = [
+
+                `Baiklah. Angkanya ${parity}.`,
+
+                `Aku akan sedikit berbaik hati: ${parity}.`,
+
+                `Petunjuknya sederhana. Angkanya ${parity}.`,
+
+                `Rahasia kecil dibocorkan: ${parity}.`
+
+            ];
+
+
             setMessage(
                 "🔢",
-                `Baiklah. Angkanya ${parity}.`
+                randomItem(
+                    clueMessages
+                )
+            );
+
+
+            setGameEmoji(
+                "🔢"
             );
 
 
@@ -1899,21 +2617,27 @@
                 text =
                     "Angkanya ada di bagian 1–25.";
 
-            } else if (
+            }
+
+            else if (
                 secretNumber <= 50
             ) {
 
                 text =
                     "Angkanya ada di bagian 26–50.";
 
-            } else if (
+            }
+
+            else if (
                 secretNumber <= 75
             ) {
 
                 text =
                     "Angkanya ada di bagian 51–75.";
 
-            } else {
+            }
+
+            else {
 
                 text =
                     "Angkanya ada di bagian 76–100.";
@@ -1921,9 +2645,29 @@
             }
 
 
+            const clueMessages = [
+
+                text,
+
+                `Aku kasih wilayahnya: ${text.replace("Angkanya ada di bagian ", "")}`,
+
+                `Sedikit lebih sempit: ${text}`,
+
+                `Kalau mau mencari, mulai dari sini. ${text}`
+
+            ];
+
+
             setMessage(
                 "📍",
-                text
+                randomItem(
+                    clueMessages
+                )
+            );
+
+
+            setGameEmoji(
+                "📍"
             );
 
 
@@ -1953,11 +2697,42 @@
         correctNumber.textContent =
             secretNumber;
 
+
         roundAttempts.textContent =
             attempts;
 
+
         roundClues.textContent =
             `${cluesUsedThisRound} / 3`;
+
+
+        if (
+            gaveUp
+        ) {
+
+            roundResultEmoji.textContent =
+                "🏳️";
+
+            roundResultTitle.textContent =
+                "Menyerah.";
+
+            roundResultText.textContent =
+                `Angka rahasianya adalah ${secretNumber}. Tidak apa-apa. Setidaknya sekarang kita semua tahu.`;
+
+        }
+
+        else {
+
+            roundResultEmoji.textContent =
+                "🎉";
+
+            roundResultTitle.textContent =
+                "Ketemu.";
+
+            roundResultText.textContent =
+                "Kamu berhasil menemukan angka rahasianya. Berikut hasil ronde ini.";
+
+        }
 
 
         if (
@@ -1967,7 +2742,9 @@
             nextRoundButton.textContent =
                 "Lihat hasil akhir →";
 
-        } else {
+        }
+
+        else {
 
             nextRoundButton.textContent =
                 `Lanjut ke ronde ${currentRound + 1} →`;
@@ -2035,8 +2812,11 @@
         totalAttempts.textContent =
             total;
 
+
         rankName.textContent =
-            getRank(total);
+            getRank(
+                total
+            );
 
     }
 
@@ -2045,7 +2825,9 @@
        RANKS
     ========================= */
 
-    function getRank(score) {
+    function getRank(
+        score
+    ) {
 
         if (
             score <= 10
@@ -2114,6 +2896,36 @@
         return "👑 CEO Percobaan";
 
     }
+
+
+    /* =========================
+       MOBILE KEYBOARD UX
+    ========================= */
+
+    numberInput.addEventListener(
+        "focus",
+        () => {
+
+            if (
+                window.innerWidth <= 560
+            ) {
+
+                setTimeout(
+                    () => {
+
+                        numberInput.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center"
+                        });
+
+                    },
+                    250
+                );
+
+            }
+
+        }
+    );
 
 
     /* =========================
